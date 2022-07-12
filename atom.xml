@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>不懂悲伤的幸福拓扑猫</title>
+  
+  <subtitle>Imaging Nature</subtitle>
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2022-07-12T19:56:08.580Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>Image Nature</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>My first blog</title>
+    <link href="http://example.com/2022/07/12/Web/Blog/my-first-blog/"/>
+    <id>http://example.com/2022/07/12/Web/Blog/my-first-blog/</id>
+    <published>2022-07-11T20:51:26.000Z</published>
+    <updated>2022-07-12T19:56:08.580Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;preface&quot;&gt;Preface&lt;/h1&gt;
+&lt;p&gt;今年年初突然间有了搭建一个个人网站的想法，目的挺多。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Web" scheme="http://example.com/categories/Web/"/>
+    
+    <category term="Blog" scheme="http://example.com/categories/Web/Blog/"/>
+    
+    
+    <category term="hexo" scheme="http://example.com/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://example.com/2022/07/11/hello-world/"/>
+    <id>http://example.com/2022/07/11/hello-world/</id>
+    <published>2022-07-11T14:28:35.268Z</published>
+    <updated>2022-07-11T14:28:35.268Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;p&gt;Welcome to &lt;a</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>

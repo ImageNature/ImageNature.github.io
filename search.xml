@@ -3,40 +3,222 @@
   <entry>
     <title>Hello World</title>
     <url>/2022/07/11/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very
+first post. Check <a href="https://hexo.io/docs/">documentation</a> for
+more info. If you get any problems when using Hexo, you can find the
+answer in <a
+href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or
+you can ask me on <a
+href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="create-a-new-post">Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a
+href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="run-server">Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<h3 id="generate-static-files">Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a
+href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="deploy-to-remote-sites">Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a
+href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
   <entry>
-    <title>my blog</title>
-    <url>/2022/07/12/my-blog/</url>
-    <content><![CDATA[<p>这是我第一篇正式的博文，参考了比较多的文章，本来是打算部署在阿里云上的，可惜还差一步失败了，转而尝试部署在 Github 上，虽然也遇到了一个小问题，不过最终还是成功了，正如我们能看到的这样。等将来有时间，有精力，有经济再重新部署在自己的服务器上吧。</p>
-<p>博客主要记录自己平时的学到的内容，比如计算机知识，或者数学物理等。由于自己的水平有限，有错误再所难免，本人尽力避免传播错误的信息，博客内容也将会不断更新，纠正错误。作为常年踩坑的普通一员，我深知历经千辛万苦搜索答案，却遇到错误答案的心酸苦闷。</p>
-<p>以下是测试内容：</p>
-<script type="math/tex; mode=display">\begin{equation} \label{eq2}
+    <title>My first blog</title>
+    <url>/2022/07/12/Web/Blog/my-first-blog/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="preface">Preface</h1>
+<p>今年年初突然间有了搭建一个个人网站的想法，目的挺多。</p>
+<span id="more"></span>
+<p>一是为了记录自己曾经走过的那段路，正所谓泰戈尔所言：天空没留下翅膀的痕迹，但我已飞过。二是通过简单的写作，提高遣词造句的水平。本来是想打造一个纯外文的网站，顺便练习外语，但真到落笔又觉能力不足，便想着中英混杂慢慢过渡吧，这整个过程用网站记录一下似乎也挺不错
+( 中英混杂没有其他意思 )。三是之前笔记主要用 LaTeX
+进行记录，感觉略显正式，对于一些零散、天马行空的的想法，实在难以落笔，纠结于破坏整体的内容，形成割裂感。Markdown
+网页在这方面算是一个很好的补充，再加上喜欢 Hexo
+的风格，便随意地开启了一个新坑(当然这个想法是几天前才有)。</p>
+<p>有了想法就着手去做，网上浏览了一下发现 Blog
+很适合，就买了一台服务器和一个域名便开始折腾起来，当时搭建的是 WordPress
+。经过一晚上的折腾，一不小心在美化上迷失自我，Blog 是搭出来了，WordPress
+的模式却不太适应，再加上还有事情忙，留的时间只够写碎碎念，那边便荒废了。今天回想起来，看到输入域名跳出自己的主页还是挺开心的。</p>
+<p>总是这样，需要折腾，尝试，我才知道自己喜欢什么，适合什么 (
+也可能现在还不知道吧 )。</p>
+<p>主要记录自己平时学到的内容，比如计算机知识，或者关于数学物理等的一些东西。</p>
+<p><strong>本站点所有内容不具有知识传播的作用，仅作为个人记录</strong></p>
+<p>当然如果有幸被你看到提出想法或指出错误，我也十分乐意接受。</p>
+<p>由于自己的水平有限，有错误在所难免，本人也将尽力避免传播错误的信息，博客内容也会不断更新，纠正错误。作为常年踩坑的普通一员，我深知历经千辛万苦搜索答案，却遇到错误答案的心酸苦闷。</p>
+<p>就不做过多介绍了，但愿我能更新下去，记录下去吧。</p>
+<h1 id="introduction">Introduction</h1>
+<p>这是第一篇正式的博文，Hexo
+的搭建过程参考了比较多的文章，本来打算部署在阿里云上的，可惜还是没能实现，转而尝试部署在
+Github
+上，虽然也遇到了一个小问题，不过很快就解决了，正如我们能看到的这样。搭建过程如此顺利，完全依赖于网络上丰富的资源，各位前辈的宝贵经验，在此感谢你们，就不一一列举了。</p>
+<p>网站的整个部署过程到这里就算结束了，等将来有时间，有精力，有经济能力再部署在属于自己的服务器上吧。</p>
+<p>下面简单介绍下搭建过程和一些自定义功能。</p>
+<h1 id="plugins">Plugins</h1>
+<h2 id="base">Base</h2>
+<p>本站点很多相关功能的实现是通过观察别人网站的表现进行搜索配置的。因此如果以后重新配置
+Hexo
+环境应该也不困难。说不定以后会有更好的实现方式，一些功能我也就没再纠结。</p>
+<p>注意区分主题配置文件和 Hexo
+或站点配置文件两者的区别，名字定义很重要，稍不留神容易掉坑。以下部分功能需要下载依赖，基本都是通过
+npm 下载，搜索名字不难找到答案</p>
+<ol type="1">
+<li><strong>theme</strong> NexT <a href="https://theme-next.js.org/">official website</a></li>
+</ol>
+<p>很多功能基本都可以用主题实现，具体实现方法在官方指南里已经叙述得非常详细，在这里不再赘述。</p>
+<ol start="2" type="1">
+<li><p><strong>local_search</strong> 搜索的实现 <a href="https://github.com/next-theme/hexo-generator-searchdb">目前可用</a></p></li>
+<li><p><strong>symbols_count_time</strong> 设置阅读时间，字数,
+第一次设置时无法获得数据,
+原因似乎是没有执行<code>hexo clean</code></p></li>
+<li><p><strong>busuanzi</strong> 配置阅读访问量,
+但我配置的似乎出问题了，网站底部的数据是错误的，但不想理了</p></li>
+<li><p><strong>hexo-pdf</strong> 可以插入 PDF
+文件，打开配置即可，但测试时似乎无法加载本地 PDF
+文件，加载网络资源没有问题，可能是我的使用方式出了问题</p></li>
+<li><p><strong>hexo-renderer-pandoc</strong> 官方推荐，MathJax 渲染, 将
+<code>tags</code> 设置为 <code>ams</code> 可以使用公式编号 <a href="https://theme-next.js.org/docs/third-party-services/math-equations">目前可用</a></p>
+<p>我在这里设置为 <code>all</code></p>
+<blockquote>
+<p>使用本插件时需要下载相应依赖，同时还需要下载
+pandoc(搜索会发现主页，进去下载即可) 并且最好重新启动计算机。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-renderer-pandoc --save</span><br></pre></td></tr></table></figure>
+<p>数学公式的具体操作不再赘述</p></li>
+</ol>
+<h2 id="customized">Customized</h2>
+<ol type="1">
+<li><p><strong>hexo-reference</strong> Markdown 的脚注，<a href="https://github.com/kchen0x/hexo-reference">目前可用</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-reference --save</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>hexo-reference-plus</strong> 使用 markdown
+添加引用和脚注, 可以配合上面的脚注插件使用，这个插件用来添加引用.
+有一个玩法是设置<code>tippy</code> 为 <code>true</code> 且不在
+<code>Front-matter</code> 区域设置 <code>refplus:true</code>
+引用将会以文章别名出现, <a href="https://github.com/MaxChang3/hexo-reference-plus/blob/main/README_CN.md">目前可用</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-reference-plus</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>hexo-butterfly-charts</strong> 统计图表, NexT
+可以使用此插件，<a href="https://guole.fun/posts/18158/index.html">目前可用</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm i hexo-butterfly-charts --save</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>Hexo 页脚增加网站运行时间统计</strong> <a href="https://blog.csdn.net/qq_39720594/article/details/105411030">可参考</a></p></li>
+<li><p><strong>RSS</strong> 在下面测试</p></li>
+<li><p><strong>hexo-auto-category</strong> 按文件夹分类，which generates
+categories automatically from folder structure for each post. <a href="https://github.com/xu-song/hexo-auto-category">目前可用</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-auto-category --save</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><code>busuanzi</code>是无法获得数据，可能是测试时未执行
+<code>hexo clean</code></p>
+<p>无法上传到 <code>Github</code> ，解决方法是将
+<code>git repo ssh address</code>使用类似<code>git@github.com:username.github.io.git</code>
+的地址，从 <code>https</code> 换成 <code>ssh</code>
+(不知道这个说法是否准确)。<code>branch</code> 这个字段中的
+<code>master</code> 可能得换成 <code>main</code>。</p>
+<p>还有一个是给中英文之间加空格的插件，稍微麻烦点的还有配置 Local
+Search, 字数和阅读时间统计，访问量以及 RSS 订阅 (
+主要是自己当时折腾得久了一点，其实也不是很难 )。</p>
+<h1 id="test">Test</h1>
+<h2 id="测试公式">测试公式</h2>
+<p><span class="math display">\[\begin{equation} \label{eq1}
 \begin{aligned}
-a &= b + c \\
-  &= d + e + f + g \\
-  &= h + i
+a &amp;= b + c \\
+  &amp;= d + e + f + g \\
+  &amp;= h + i
 \end{aligned}
-\end{equation}</script><script type="math/tex; mode=display">
+\end{equation}\]</span></p>
+<p><span class="math display">\[
 \frac{\partial u}{\partial t}
 = h^2 \left( \frac{\partial^2 u}{\partial x^2} +
 \frac{\partial^2 u}{\partial y^2} +
-\frac{\partial^2 u}{\partial z^2}\right)</script>]]></content>
+\frac{\partial^2 u}{\partial z^2}\right)
+\]</span></p>
+<h2 id="测试图表">测试图表</h2>
+<div id="categories-chart" class="js-pjax">
+
+</div>
+<h2 id="rss-订阅">RSS 订阅</h2>
+<blockquote>
+<p>Next 7.7 以后 将 RSS 按钮的代码删掉了，按照以往添加 RSS
+的方法设置后可以生成 XML 文件，但没有按钮。</p>
+</blockquote>
+<p>下载插件，hexo 目录运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-feed --save</span><br></pre></td></tr></table></figure>
+<p>在站点配置文件添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">plugins: hexo-generate-feed</span><br><span class="line"># rss</span><br><span class="line">feed:</span><br><span class="line">  type: atom</span><br><span class="line">  path: atom.xml</span><br><span class="line">  limit: 20</span><br><span class="line">  hub:</span><br><span class="line">  content:</span><br><span class="line">  content_limit: 140</span><br><span class="line">  content_limit_delim: ' '</span><br><span class="line">  order_by: -date</span><br></pre></td></tr></table></figure>
+<p><strong>添加 RSS 字段</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSS: /atom.xml</span><br></pre></td></tr></table></figure>
+<p>注意添加的位置以及大写，要放在主题配置文件中的 menu 里面,
+显示比较正常也较美观 ( 跟主题的选择有关系 )</p>
+<p><strong>在侧边栏添加 RSS 按钮</strong></p>
+<p>在
+<code>main hexo&gt;\node_modules\hexo-theme-next\layout\_partials\sidebar</code>文件夹中，打开
+<code>site-overview.njk</code> 文件</p>
+<p>在 <code>- if theme.site_state</code> 前加入下面的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">{% if theme.rss %}</span><br><span class="line">  &lt;div class="feed-link motion-element"&gt;</span><br><span class="line"> &nbsp;  &lt;a href="{{ url_for(theme.rss) }}" rel="alternate"&gt;</span><br><span class="line"> &nbsp; &nbsp;  &lt;i class="fa fa-rss"&gt;&lt;/i&gt;</span><br><span class="line"> &nbsp; &nbsp; &nbsp;  RSS</span><br><span class="line"> &nbsp; &nbsp;&lt;/a&gt;</span><br><span class="line"> &nbsp;&lt;/div&gt;</span><br><span class="line">{% endif %}</span><br></pre></td></tr></table></figure>
+<p><strong>执行部署三件套</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s </span><br></pre></td></tr></table></figure>
+<p>RSS 添加完成</p>
+<h2 id="测试-pdf">测试 PDF</h2>
+<p>通过网络链接能加载 pdf ，本地加载不知道为何失效。</p>
+<div class="pdf-container" data-target="https://cdn.jsdelivr.net/gh/Justlovesmile/CDN/pdf/小作文讲义.pdf" data-height="500px"></div>
+<h2 id="测试脚注">测试脚注</h2>
+<p>basic footnote<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="basic footnote content">[1]</span></a></sup></p>
+<h2 id="注意">注意</h2>
+<p>测试发现脚注位于引用区域之后,并且测试发现似乎引用会引起一些问题。</p>
+<h2 id="测试引用">测试引用</h2>
+<p>引用标记<sup class="refplus-num"><a href="#ref-mcf-2021">[1]</a></sup> <sup class="refplus-num"><a href="#ref-mcf-2022">[2]</a></sup>
+
+开启隐藏引用区域
+
+</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">{% references  %}</span><br><span class="line">[mcf-2024]  Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</span><br><span class="line"></span><br><span class="line">[mcf-2025]  Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</span><br><span class="line">{% endreferences %}</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<ul id="refplus"><li id="ref-mcf-2021" data-num="1">[1]   Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</li><li id="ref-mcf-2022" data-num="2">[2]   Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</li></ul><p></p>
+<div id="footnotes">
+<hr>
+<div id="footnotelist">
+<ol style="list-style: none; padding-left: 0; margin-left: 40px">
+<li id="fn:1">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">basic
+footnote content<a href="#fnref:1" rev="footnote"> ↩︎</a></span>
+</li>
+</ol>
+</div>
+</div>
+
+    <style>
+    #refplus, #refplus li{ 
+        padding:0;
+        margin:0;
+        list-style:none;
+    }；
+    </style>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script>
+    document.querySelectorAll(".refplus-num").forEach((ref) => {
+        let refid = ref.firstChild.href.replace(location.origin+location.pathname,'');
+        let refel = document.querySelector(refid);
+        let refnum = refel.dataset.num;
+        let ref_content = refel.innerText.replace(`[${refnum}]`,'');
+        tippy(ref, {
+            content: ref_content,
+        });
+    });
+    </script>
+    ]]></content>
       <categories>
-        <category>first</category>
+        <category>Web</category>
+        <category>Blog</category>
       </categories>
       <tags>
-        <tag>web</tag>
-        <tag>blog</tag>
+        <tag>hexo</tag>
       </tags>
   </entry>
 </search>
