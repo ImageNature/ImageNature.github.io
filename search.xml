@@ -167,19 +167,19 @@ a &amp;= b + c \\
 <h2 id="注意">注意</h2>
 <p>测试发现脚注位于引用区域之后,并且测试发现似乎引用会引起一些问题。</p>
 <h2 id="测试引用">测试引用</h2>
-<p>引用标记<sup class="refplus-num"><a href="#ref-mcf-2021">[1]</a></sup> <sup class="refplus-num"><a href="#ref-mcf-2022">[2]</a></sup>
+<p>引用标记<sup class="refplus-num"><a href="#ref-mcf-2021">[1]</a></sup> 
 
-开启隐藏引用区域
+# 开启隐藏引用区域
 
-</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">{% references  %}</span><br><span class="line">[mcf-2024]  Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</span><br><span class="line"></span><br><span class="line">[mcf-2025]  Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</span><br><span class="line">{% endreferences %}</span><br></pre></td></tr></table></figure>
-
-
+</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">{% references hide %}</span><br><span class="line">[mcf-2024]  Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</span><br><span class="line"></span><br><span class="line">[mcf-2025]  Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</span><br><span class="line">{% endreferences %}</span><br></pre></td></tr></table></figure>
 
 
 
 
 
-<ul id="refplus"><li id="ref-mcf-2021" data-num="1">[1]   Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</li><li id="ref-mcf-2022" data-num="2">[2]   Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</li></ul><p></p>
+
+
+<ul id="refplus"><li id="ref-mcf-2021" data-num="1">[1]   Max C. Foo.  A way to write an article.[J] Journal of Kelaideng University Samwin School. 2021.3 300-321.</li></ul><p></p>
 <div id="footnotes">
 <hr>
 <div id="footnotelist">
