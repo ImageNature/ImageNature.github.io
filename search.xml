@@ -161,7 +161,7 @@ a &amp;= b + c \\
 <p>RSS 添加完成</p>
 <h2 id="测试-pdf">测试 PDF</h2>
 <p>通过网络链接能加载 pdf ，本地加载不知道为何失效。</p>
-<div class="pdf-container" data-target="https://cdn.jsdelivr.net/gh/Justlovesmile/CDN/pdf/小作文讲义.pdf" data-height="500px"></div>
+<div class="pdf-container" data-target="https://<" data-height=">.pdf"></div>
 <h2 id="测试脚注">测试脚注</h2>
 <p>basic footnote<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="basic footnote content">[1]</span></a></sup></p>
 <h2 id="注意">注意</h2>
