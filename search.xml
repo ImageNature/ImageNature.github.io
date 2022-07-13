@@ -165,7 +165,7 @@ a &amp;= b + c \\
 <h2 id="测试脚注">测试脚注</h2>
 <p>basic footnote<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="basic footnote content">[1]</span></a></sup></p>
 <h2 id="注意">注意</h2>
-<p>测试发现脚注位于引用区域之后,并且测试发现似乎引用会引起一些问题。</p>
+<p>测试发现脚注位于引用区域之后,并且测试发现引用会引起一些问题。</p>
 <h2 id="测试引用">测试引用</h2>
 <p>引用标记<sup class="refplus-num"><a href="#ref-mcf-2021">[1]</a></sup> 
 
