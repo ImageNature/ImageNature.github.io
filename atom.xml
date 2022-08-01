@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>不懂悲伤的幸福拓扑猫</title>
+  <title>不懂悲伤的魔法猫</title>
   
   <subtitle>饮冰十年, 难凉热血</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://imagenature.github.io/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
-  <updated>2022-07-13T08:02:53.850Z</updated>
-  <id>http://example.com/</id>
+  <link href="https://imagenature.github.io/"/>
+  <updated>2022-08-01T13:45:51.953Z</updated>
+  <id>https://imagenature.github.io/</id>
   
   <author>
     <name>Image Nature</name>
@@ -17,42 +17,89 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>My first blog</title>
-    <link href="http://example.com/2022/07/12/Web/Blog/my-first-blog/"/>
-    <id>http://example.com/2022/07/12/Web/Blog/my-first-blog/</id>
-    <published>2022-07-11T20:51:26.000Z</published>
-    <updated>2022-07-13T08:02:53.850Z</updated>
+    <title>DSpace6.3 的安装和自定义过程记录</title>
+    <link href="https://imagenature.github.io/2022/07/31/Web/DSpace/dspace-63/"/>
+    <id>https://imagenature.github.io/2022/07/31/Web/DSpace/dspace-63/</id>
+    <published>2022-07-30T17:18:38.000Z</published>
+    <updated>2022-08-01T13:45:51.953Z</updated>
     
     
     <summary type="html">&lt;h1 id=&quot;preface&quot;&gt;Preface&lt;/h1&gt;
-&lt;p&gt;今年年初突然间有了搭建一个个人网站的想法，目的挺多。&lt;/p&gt;</summary>
+&lt;p&gt;机构存储库软件叫法很多，但意思基本都是大学，研究机构等用来存储数字资产的工具，尽管有细微差别，然本文不做细致区分。&lt;/p&gt;
+&lt;p&gt;最近在整理笔记本时发现资料挺多，想找个软件进行管理，机缘巧合下就找到了
+DSpace 这个开源机构存储库软件。&lt;/p&gt;</summary>
     
     
     
-    <category term="Web" scheme="http://example.com/categories/Web/"/>
+    <category term="Web" scheme="https://imagenature.github.io/categories/Web/"/>
     
-    <category term="Blog" scheme="http://example.com/categories/Web/Blog/"/>
+    <category term="DSpace" scheme="https://imagenature.github.io/categories/Web/DSpace/"/>
     
     
-    <category term="hexo" scheme="http://example.com/tags/hexo/"/>
+    <category term="dspace" scheme="https://imagenature.github.io/tags/dspace/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Install MediaWiki in Debian</title>
+    <link href="https://imagenature.github.io/2022/07/13/Web/MediaWiki/install-MediaWiki/"/>
+    <id>https://imagenature.github.io/2022/07/13/Web/MediaWiki/install-MediaWiki/</id>
+    <published>2022-07-13T12:15:49.000Z</published>
+    <updated>2022-08-01T13:47:12.497Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;preface&quot;&gt;Preface&lt;/h1&gt;
+&lt;p&gt;准备搭建一个个人Wiki，选择 MediaWiki，&lt;a
+href=&quot;https://www.mediawiki.org/wiki/MediaWiki&quot;&gt;Official website&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Web" scheme="https://imagenature.github.io/categories/Web/"/>
+    
+    <category term="MediaWiki" scheme="https://imagenature.github.io/categories/Web/MediaWiki/"/>
+    
+    
+    <category term="wiki" scheme="https://imagenature.github.io/tags/wiki/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>My first blog</title>
+    <link href="https://imagenature.github.io/2022/07/12/Web/Hexo/my-first-blog/"/>
+    <id>https://imagenature.github.io/2022/07/12/Web/Hexo/my-first-blog/</id>
+    <published>2022-07-11T20:51:26.000Z</published>
+    <updated>2022-08-01T13:37:01.367Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;preface&quot;&gt;Preface&lt;/h1&gt;
+&lt;p&gt;今年年初突然间有了搭建一个个人网站的想法。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Web" scheme="https://imagenature.github.io/categories/Web/"/>
+    
+    <category term="Hexo" scheme="https://imagenature.github.io/categories/Web/Hexo/"/>
+    
+    
+    <category term="hexo" scheme="https://imagenature.github.io/tags/hexo/"/>
     
   </entry>
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/2022/07/11/hello-world/"/>
-    <id>http://example.com/2022/07/11/hello-world/</id>
+    <link href="https://imagenature.github.io/2022/07/11/hello-world/"/>
+    <id>https://imagenature.github.io/2022/07/11/hello-world/</id>
     <published>2022-07-11T14:28:35.268Z</published>
-    <updated>2022-07-11T14:28:35.268Z</updated>
+    <updated>2022-08-01T12:02:04.157Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;p&gt;Welcome to &lt;a</summary>
-        
-      
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very
+first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for
+more info. If you get any problems when using Hexo, you can find the
+answer in &lt;a
+href=&quot;https://hexo.io/docs/troubleshooting.html&quot;&gt;troubleshooting&lt;/a&gt; or
+you can ask me on &lt;a
+href=&quot;https://github.com/hexojs/hexo/issues&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;</summary>
     
     
     

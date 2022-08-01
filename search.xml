@@ -10,6 +10,7 @@ answer in <a
 href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or
 you can ask me on <a
 href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<span id="more"></span>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="create-a-new-post">Create a new post</h3>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
@@ -29,27 +30,368 @@ href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
   <entry>
-    <title>My first blog</title>
-    <url>/2022/07/12/Web/Blog/my-first-blog/</url>
+    <title>DSpace6.3 的安装和自定义过程记录</title>
+    <url>/2022/07/31/Web/DSpace/dspace-63/</url>
     <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="preface">Preface</h1>
-<p>今年年初突然间有了搭建一个个人网站的想法，目的挺多。</p>
+<p>机构存储库软件叫法很多，但意思基本都是大学，研究机构等用来存储数字资产的工具，尽管有细微差别，然本文不做细致区分。</p>
+<p>最近在整理笔记本时发现资料挺多，想找个软件进行管理，机缘巧合下就找到了
+DSpace 这个开源机构存储库软件。</p>
+<span id="more"></span>
+<p>目前官网已经更新到了 7.3 版本。我也在本地安装了 DSpace7.2 和 7.3
+两个版本，但看来看去最后还是选择了 DSpace6.3
+这个版本。方便起见，DSpace6.3 以下简称为 dspace。</p>
+<p>除了 DSpace
+，还有其他很多机构存储库软件，但是默认界面，安装过程，使用模式等有较大区别,
+选择凭个人喜好.
+对个人来说可能搭建个网盘或者直接使用本地文件夹存储资料就足够了，并不需要这些东西.</p>
+<h1 id="something">Something</h1>
+<p>由于系统环境不一样，并且我是从新系统开始安装软件，因此以下内容会比较详细.</p>
+<ul>
+<li><p>发行版 debian-11.4.0-amd64-netinst</p>
+<p>安装的时候尽量断网最小化安装，避免连接到国外的服务器下载安全更新等内容，这会导致安装进度过慢，同时作为服务器使用不需要桌面</p></li>
+<li><p>内存选择 4G，这个看个人情况， 2G 也可以，再大的 8G，12G
+也可以</p></li>
+<li><p>2核心2处理器</p></li>
+<li><p>硬盘，我选择 512 G，不够后期调整</p></li>
+<li><p>xshell 进行ssh 连接</p></li>
+<li><p>clash 魔法</p></li>
+<li><p>由于软件的要求，用户命名为 dspace
+，口令随意(生产环境不能随意)，我为了方便以下统一使用 password</p>
+<p>如更改用户名等自行研究</p></li>
+</ul>
+<h1 id="requirements">Requirements</h1>
+<ul>
+<li><p>openjdk-8-jdk</p></li>
+<li><p>git (必选，否则maven构建会出现问题)</p></li>
+<li><p>postgresql</p></li>
+<li><p>tomcat8 (tomcat9 尚不清楚是否存在兼容问题)</p></li>
+<li><p>maven</p></li>
+<li><p>ant</p></li>
+<li><p>更多内容请见官网</p>
+<p>https://dspace.lyrasis.org/</p></li>
+</ul>
+<h1 id="step">Step</h1>
+<p>如无特殊说明，都在 dspace 用户下操作</p>
+<h2 id="system">system</h2>
+<h3 id="user">user</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 最小化安装新系统可能没有 openssh, sudo 等包</span></span><br><span class="line">su</span><br><span class="line">apt grade</span><br><span class="line">apt install openssh-server</span><br><span class="line">apt install sudo -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 赋予用户 sudo 权限</span></span><br><span class="line">sudo su - username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换用户使用 sudo 可能会显示用户不在 sudo 文件里，因此需要添加</span></span><br><span class="line">su</span><br><span class="line">nano /etc/sudoers</span><br><span class="line"><span class="comment"># 在文件中找到 &lt;root ALL=(ALL) ALL&gt;，在该行下添加提升权限的用户信息，如：</span></span><br><span class="line">root    ALL=(ALL)       ALL</span><br><span class="line">username    ALL=(ALL)       ALL</span><br><span class="line"><span class="comment"># 这里的 username 为 dspace</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+<h3 id="net">net</h3>
+<p>换镜像源以及魔法上网可以避免很多麻烦，减少时间</p>
+<ul>
+<li><p><a
+href="https://www.cnblogs.com/liuguanglin/p/debian11_repo.html">Debian
+11 (bullseye) 国内软件源</a></p></li>
+<li><p><a href="https://www.debian.org/mirror/list">Debian
+全球镜像站</a></p></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份软件源列表</span></span><br><span class="line"><span class="built_in">cp</span> /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line"><span class="comment"># 修改软件源列表</span></span><br><span class="line">sudo nano /etc/apt/sources.list</span><br><span class="line"><span class="comment"># 更新软件源列表</span></span><br><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+<p>以下为魔法常用命令, 注意仅当前终端有效:</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=http://127.0.0.1:7890</span><br><span class="line"><span class="built_in">export</span> https_proxy=http://127.0.0.1:7890</span><br></pre></td></tr></table></figure></p>
+<p>一个相关教程，后面我会自己整理一下，不同发行版的魔法都得照顾到</p>
+<ul>
+<li><a href="https://www.idcbuy.net/it/linux/2433.html">在 Linux
+服务器上安装 Clash，以及开机自动启动</a></li>
+</ul>
+<h2 id="environment">environment</h2>
+<h3 id="update">update</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+<h3 id="install-git">install git</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install git</span><br><span class="line">git --version</span><br></pre></td></tr></table></figure>
+<h3 id="install-maven-and-ant">install maven and ant</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install maven</span><br><span class="line">sudo apt install ant</span><br></pre></td></tr></table></figure>
+<h3 id="configure-maven">configure maven</h3>
+<p>maven
+在国内使用很慢，整个项目构建，可能会需要几十分钟到一两个小时，换源是一个比较好的选择，这里选择的是阿里云的镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo nano /etc/maven/settings.xml</span><br></pre></td></tr></table></figure>
+<p>把两个 <code>&lt;mirrors&gt;</code> 中间的部分换成以下内容:</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mirrors</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- aliyun mirrors--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">id</span>&gt;</span>alimaven<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>central<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>aliyun maven<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.aliyun.com/nexus/content/repositories/central/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- mirrors1 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">id</span>&gt;</span>repo1<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>central<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>Human Readable Name for this Mirror.<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">url</span>&gt;</span>http://repo1.maven.org/maven2/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- mirrors2 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">id</span>&gt;</span>repo2<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>central<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>Human Readable Name for this Mirror.<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">url</span>&gt;</span>http://repo2.maven.org/maven2/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mirrors</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="install-openjdk-8-jdk">install openjdk-8-jdk</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install openjdk-8-jdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果出现</span></span><br><span class="line"><span class="comment"># E: Unable to locate package openjdk-8-jdk</span></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">sudo add-apt-repository ppa:webupd8team/java</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果出现</span></span><br><span class="line"><span class="comment"># sudo: apt-add-repository: command not found</span></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">sudo apt-get install software-properties-common</span><br><span class="line"><span class="comment"># 添加 Debian stretch ppa.</span></span><br><span class="line">sudo apt-add-repository <span class="string">&#x27;deb http://security.debian.org/debian-security stretch/updates main&#x27;</span></span><br><span class="line"><span class="comment"># 更新软件包源并下载安装 openjdk-8-jdk</span></span><br><span class="line">sudo apt update &amp;&amp; sudo apt install openjdk-8-jdk</span><br><span class="line"></span><br><span class="line"><span class="comment">## 以上方案已经不行了</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 新方案如下</span></span><br><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https software-properties-common ca-certificates lsb-release wget dirmngr gnupg</span><br><span class="line"><span class="comment"># 添加 AdoptOpenJDK GPG root用户执行</span></span><br><span class="line">wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -</span><br><span class="line"><span class="comment"># 添加 AdoptOpenJDK 官方仓库，root用户执行</span></span><br><span class="line">add-apt-repository --<span class="built_in">yes</span> https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/</span><br><span class="line"><span class="comment"># 更新 root用户执行</span></span><br><span class="line">apt-get update</span><br><span class="line"><span class="comment"># 安装 OpenJDK 8 JDK root用户执行</span></span><br><span class="line">apt-get install adoptopenjdk-8-hotspot</span><br><span class="line"><span class="comment"># 如果需要安装 OpenJDK 8 JRE root用户执行</span></span><br><span class="line">apt-get install adoptopenjdk-8-hotspot-jre</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果之前安装了其他版本的 OpenJDK</span></span><br><span class="line"><span class="comment"># 将默认 java 更改为 OpenJDK 8</span></span><br><span class="line">sudo update-alternatives --config java </span><br><span class="line"><span class="comment"># 按要求操作即可</span></span><br></pre></td></tr></table></figure>
+<h2 id="install-postgresql">install postgresql</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看可下载的 postgerspl版本 </span></span><br><span class="line">sudo apt-cache search postgresql</span><br><span class="line"><span class="comment"># 下载安装 postgerspl</span></span><br><span class="line">sudo apt install postgresql postgresql-client postgresql-contrib</span><br><span class="line"><span class="comment"># 注意版本号</span></span><br><span class="line">sudo pg_ctlcluster 13 main start	</span><br><span class="line"><span class="comment"># 查看活动状态</span></span><br><span class="line">sudo systemctl status postgresql</span><br></pre></td></tr></table></figure>
+<h2 id="configure-postgresql">configure postgresql</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 分组创建用户名为 postgres</span></span><br><span class="line"><span class="built_in">groups</span> postgres</span><br><span class="line"><span class="comment"># 给 postgres 用户(password)</span></span><br><span class="line">sudo passwd postgres</span><br><span class="line"><span class="comment"># 输入口令</span></span><br><span class="line">password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换成 postgres 用户</span></span><br><span class="line">su postgres</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个dspace 数据库用户 (此用户可以有任何名称，但我假设命名为“dspace”), 如果自定义请自行研究：</span></span><br><span class="line">createuser --username=postgres --no-superuser --pwprompt dspace</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入口令</span></span><br><span class="line">password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个由 PostgreSQL 用户 dspace 拥有的数据库</span></span><br><span class="line">createdb --username=postgres --owner=dspace --encoding=UNICODE dspace</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后，必须在新的 dspace 数据库上启用 pgcrypto 扩展</span></span><br><span class="line">psql --username=postgres dspace -c <span class="string">&quot;CREATE EXTENSION pgcrypto;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看配置，确保使用 utf-8 编码，最近的都是默认的</span></span><br><span class="line">psql -c <span class="string">&quot;SHOW SERVER_ENCODING&quot;</span></span><br><span class="line"><span class="comment"># 显示 UTF-8 说明已经使用</span></span><br><span class="line"><span class="comment"># 退出，回到原来的用户</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用 TCP</span></span><br><span class="line"><span class="comment"># 检查一下，尽管最近的版本都是默认的，也有可能没启用</span></span><br><span class="line"><span class="built_in">cd</span> /etc/postgresql/13/main/</span><br><span class="line"><span class="comment"># 不同版本不同，要查一下	</span></span><br><span class="line">sudo nano postgresql.conf</span><br><span class="line"><span class="comment"># 寻找以下内容</span></span><br><span class="line">listen_addresses = <span class="string">&#x27;localhost&#x27;</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加安全性</span></span><br><span class="line">sudo nano pg_hba.conf</span><br><span class="line"><span class="comment"># 在ipv4 最后面添加</span></span><br><span class="line"><span class="built_in">local</span>  all  dspace  md5 </span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启 postgresql 并查看当前状态,</span></span><br><span class="line">sudo systemctl restart postgresql</span><br><span class="line">systemctl status postgresql</span><br></pre></td></tr></table></figure>
+<h2 id="install-tomcat">install tomcat</h2>
+<p>直接使用 <code>apt</code> 包管理器安装在使用的时候似乎有问题
+(安装的版本是 tomcat9 )，点击发现栏跳转的页面显示乱码，本人不了解 tomcat
+因此没有研究，也不清楚究竟是哪里出现的问题</p>
+<p>以下使用另外一种安装方式 (这里安装的是 tomcat8 的最新版本,
+其他版本请自行研究) :</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在用户主目录下安装</span></span><br><span class="line"><span class="built_in">cd</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># 官网下载安装，很慢</span></span><br><span class="line">sudo wget https://downloads.apache.org/tomcat/tomcat-8/v8.5.81/bin/apache-tomcat-8.5.81.tar.gz</span><br><span class="line"><span class="comment"># 国内可以使用阿里云的镜像</span></span><br><span class="line">sudo wget http://mirrors.aliyun.com/apache/tomcat/tomcat-8/v8.5.81/bin/apache-tomcat-8.5.81.tar.gz?spm=a2c6h.25603864.0.0.2ec3337cc0Tbi7</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压, 善用 tab 键补全</span></span><br><span class="line">sudo tar xzvf &lt;tomcat压缩包名&gt;</span><br><span class="line"><span class="comment"># 重命名</span></span><br><span class="line">sudo <span class="built_in">mv</span> &lt; tomcat文件名&gt; tomcat</span><br></pre></td></tr></table></figure>
+<p>自定义启动可以通过设置脚本来实现</p>
+<h2 id="创建用户和文件夹">创建用户和文件夹</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 如果之前没有创建就创建，如果已经创建就跳过</span></span><br><span class="line">sudo useradd -m dspace</span><br><span class="line">sudo password dspace</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 DSpace 文件夹并授予权限(这个步骤尽量不改。否则要改配置文件)</span></span><br><span class="line">sudo <span class="built_in">mkdir</span> /dspace</span><br><span class="line">sudo <span class="built_in">chown</span> dspace /dspace </span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 bulid 文件夹并授予权限</span></span><br><span class="line">sudo <span class="built_in">mkdir</span> /build</span><br><span class="line">sudo <span class="built_in">chmod</span> -R 777 /build</span><br></pre></td></tr></table></figure>
+<h2 id="下载-dspace">下载 dspace</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换目录</span></span><br><span class="line"><span class="built_in">cd</span> /build	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 DSpace 6.3 from GitHub, 无法连接就 ftp 上传</span></span><br><span class="line">wget https://github.com/DSpace/DSpace/releases/download/dspace-6.3/dspace-6.3-src-release.tar.gz	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取 dspace*.tar.gz</span></span><br><span class="line">tar xzvf dspace*.tar.gz	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入文件夹 dspace-6.3-src-release</span></span><br><span class="line"><span class="built_in">cd</span> dspace-6.3-src-release</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制文件 local.cfg</span></span><br><span class="line"><span class="built_in">cp</span> dspace/config/local.cfg.EXAMPLE dspace/config/local.cfg</span><br></pre></td></tr></table></figure>
+<h2 id="configure-dspace">configure dspace</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查阅 dspace/config 文件夹中的 local.cfg 文件</span></span><br><span class="line"><span class="built_in">cd</span> dspace/config</span><br><span class="line">sudo nano local.cfg</span><br><span class="line"><span class="comment"># 一定得确保 postgresql 数据库的密码跟之前设的一样</span></span><br><span class="line"><span class="comment"># 必须把(如果不是按照流程走，请自行研究,这里的目的是使得数据库用户和口令对应上)</span></span><br><span class="line">db.username = dspace</span><br><span class="line">db.password = dspace</span><br><span class="line"><span class="comment"># 改为之前创建的数据库用户和口令</span></span><br><span class="line">db.username = dspace</span><br><span class="line">db.password = password</span><br></pre></td></tr></table></figure>
+<h2 id="默认主题构建安装">默认主题构建安装</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 返回目录 dspace-6.3-src-release</span></span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译</span></span><br><span class="line">mvn -U package	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时注意魔法有没有开启</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 DSpace</span></span><br><span class="line"><span class="built_in">cd</span> dspace/target/dspace-installer</span><br><span class="line">sudo ant fresh_install</span><br><span class="line"></span><br><span class="line">sudo <span class="built_in">cp</span> -r /dspace/webapps/* /home/dspace/tomcat/webapps*</span><br></pre></td></tr></table></figure>
+<h2 id="mirage-2-主题构建">mirage 2 主题构建</h2>
+<p><strong>使用默认主题可以直接跳过，无影响</strong>.
+如果需要自定义主题等内容，可以先在这里修改配置文件,也可以之后再修改.
+开启 mirage2
+主题请先完成自定义的环境要求，因为这是我的记录内容，我先进行修改.</p>
+<h3 id="环境要求">环境要求</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里的安装过程中需要格外注意网络，魔法或者新终端</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 curl 安装 rvm:</span></span><br><span class="line">curl -sSL https://get.rvm.io | bash -s stable</span><br><span class="line"><span class="comment"># 这里可能会遇到网络问题，导致下载失败，可以重新开启一个终端</span></span><br><span class="line"><span class="built_in">source</span> /home/dspace/.rvm/scripts/rvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 ruby</span></span><br><span class="line">rvm install 3.1.2</span><br><span class="line">rvm use 3.1.2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 nvm, node, bower, grunt, sass 和 compass</span></span><br><span class="line">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash</span><br><span class="line"><span class="comment"># 安装 node14 的最新版本</span></span><br><span class="line">nvm install 14</span><br><span class="line"><span class="comment"># 如果出现命令找不到的错误，打开一个新终端即可</span></span><br><span class="line"><span class="comment"># 使用 node14</span></span><br><span class="line">nvm <span class="built_in">alias</span> default 14</span><br><span class="line"></span><br><span class="line">npm install -g bower</span><br><span class="line">npm install -g grunt &amp;&amp; npm install -g grunt-cli</span><br><span class="line">gem install sass -v 3.3.14</span><br><span class="line">gem install compass -v 1.0.1 </span><br></pre></td></tr></table></figure>
+<p>相关内容自官方邮件交流</p>
+<p><a
+href="https://groups.google.com/g/dspace-tech/c/VwUu1pxmwsk/m/5U95pP_JGQAJ?utm_medium=email&amp;utm_source=footer">解决方案参考来源</a></p>
+<blockquote>
+<p>tant...@umn.edu</p>
+<p>2022年5月12日 23:14:58</p>
+<p>收件人 bla...@umich.edu、DSpace Technical Support</p>
+<p>Thanks Jose!</p>
+<p>I leveraged the instructions at <a
+href="https://github.com/DSpace/DSpace/tree/dspace-6_x/dspace-xmlui-mirage2#installation"
+class="uri">https://github.com/DSpace/DSpace/tree/dspace-6_x/dspace-xmlui-mirage2#installation</a>
+and a single user installation of rvm to finally get my build to work.
+Here's what finally did it for me:</p>
+<p>## grab rvm and install for the dspace user only:</p>
+<p>curl -sSL <a href="https://get.rvm.io/">https://get.rvm.io</a> | bash
+-s stable source /home/dspace/.rvm/scripts/rvm</p>
+<p>## install a newish version of ruby (I did need to install a couple
+RHEL packages, for which I have sudo) rvm install 3.1.2 rvm use
+3.1.2</p>
+<p>## install nvm, node, bower, grunt, sass and compass curl -o- <a
+href="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh"
+class="uri">https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh</a>
+| bash nvm install 12 nvm alias default 12 npm install -g bower npm
+install -g grunt &amp;&amp; npm install -g grunt-cli</p>
+<p>gem install sass -v 3.3.14 gem install compass -v 1.0.1 (compass
+install actually upgrades sass to 3.4.25)</p>
+<p>That's it, I was able to build successfully by setting
+-Dmirage2.deps.included=false which I think is the default anyway.</p>
+<p>~~Bill</p>
+</blockquote>
+<h3 id="mirage2-主题构建安装">mirage2 主题构建安装</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 返回目录 dspace-6.3-src-release</span></span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意魔法有没有开启，魔法没开第一次可能会失败，因为经常切换终端，魔法仅本终端有效，如果下载还出现问题，就多切换终端</span></span><br><span class="line">mvn package -Dmirage2.on=<span class="literal">true</span> -Dmirage2.deps.included=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line"><span class="built_in">cd</span> dspace/target/dspace-installer</span><br><span class="line">sudo ant fresh_install</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把文件复制到 tomcat 中</span></span><br><span class="line">sudo <span class="built_in">cp</span> -r /dspace/webapps/* /home/dspace/tomcat/webapps*</span><br><span class="line">sudo service tomcat start </span><br></pre></td></tr></table></figure>
+<h3 id="自定义">自定义</h3>
+<p>参考内容来源</p>
+<ul>
+<li>https://wiki.lib.sun.ac.za/index.php/SUNScholar/XMLUI_Theme</li>
+<li>https://github.com/twbs/bootstrap-sass/blob/6b0ca5025c64f2e5696c8719cfce7148c78d0a50/assets/stylesheets/bootstrap/_variables.scss</li>
+</ul>
+<h4 id="调色">调色</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo nano /build/dspace-6.3-src-release/dspace-xmlui-mirage2/src/main/webapp/styles/classic_mirage_color_scheme/_bootstrap_variables.scss</span><br></pre></td></tr></table></figure>
+<p>在文件底部添加内容即可, 我的配置文件如下:
+(似乎面包屑的颜色设置不起作用)</p>
+<figure class="highlight scss"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The contents of this file are subject to the license and copyright</span></span><br><span class="line"><span class="comment"> * detailed in the LICENSE and NOTICE files at the root of the source</span></span><br><span class="line"><span class="comment"> * tree and available online at</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * http://www.dspace.org/license/</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// Preset Bootstrap variables</span></span><br><span class="line"><span class="comment">// ----------------------</span></span><br><span class="line"><span class="variable">$brand-primary</span>: <span class="number">#607890</span> !default;</span><br><span class="line"></span><br><span class="line"><span class="variable">$navbar-inverse-bg</span>: <span class="number">#1F3F5E</span> !default;</span><br><span class="line"><span class="variable">$navbar-inverse-link-color</span>: <span class="number">#eee</span> !default;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Colours CSS</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="variable">$navbar-inverse-bg</span>:      <span class="number">#000000</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$brand-primary</span>:          <span class="number">#bababa</span>;</span><br><span class="line"><span class="variable">$brand-warning</span>:          <span class="number">#ff9b33</span>;</span><br><span class="line"><span class="variable">$brand-success</span>:          <span class="number">#5cb85c</span>;</span><br><span class="line"><span class="variable">$brand-info</span>:             <span class="number">#5bc0de</span>;</span><br><span class="line"><span class="variable">$brand-danger</span>:           <span class="number">#d9534f</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable">$gray-base</span>:              <span class="number">#000</span>;</span><br><span class="line"><span class="variable">$gray-darker</span>:            <span class="number">#222</span>;</span><br><span class="line"><span class="variable">$gray-dark</span>:              <span class="number">#333</span>;</span><br><span class="line"><span class="variable">$gray</span>:                   <span class="number">#555</span>;</span><br><span class="line"><span class="variable">$gray-light</span>:             <span class="number">#777</span>;</span><br><span class="line"><span class="variable">$gray-lighter</span>:           <span class="number">#eee</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$link-color</span>:             <span class="number">#82bbf5</span>;</span><br><span class="line"><span class="comment">//** Link hover color set via `darken()` function.</span></span><br><span class="line"><span class="variable">$link-hover-color</span>:       <span class="number">#FF69B4</span>;</span><br><span class="line"><span class="comment">//** Link hover decoration.</span></span><br><span class="line"><span class="variable">$link-hover-decoration</span>: underline !default;</span><br><span class="line"></span><br><span class="line"><span class="variable">$component-active-bg</span>:           <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$btn-primary-bg</span>:                <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$pagination-active-bg</span>:          <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$pagination-active-border</span>:      <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$progress-bar-bg</span>:               <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$label-primary-bg</span>:              <span class="number">#000000</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$panel-primary-border</span>:          <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$panel-primary-heading-bg</span>:      <span class="number">#000000</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$table-bg-hover</span>:                <span class="number">#0fdb79</span>;</span><br><span class="line"><span class="variable">$list-group-hover-bg</span>:           <span class="number">#0fdb79</span>;</span><br><span class="line"><span class="variable">$dropdown-link-hover-bg</span>:        <span class="number">#0fdb79</span>;</span><br><span class="line"><span class="variable">$pagination-hover-bg</span>:           <span class="number">#0fdb79</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$breadcrumb-bg</span>:                 <span class="number">#000000</span>;</span><br><span class="line"><span class="variable">$breadcrumb-color</span>:              <span class="number">#c4a91d</span>;</span><br><span class="line"><span class="variable">$breadcrumb-active-color</span>:       <span class="number">#0fdb79</span>;</span><br><span class="line"><span class="variable">$breadcrumb-separator</span>:          <span class="string">&quot;&gt;&gt;&quot;</span> !default;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="通用元素">通用元素</h4>
+<p>使用 <code>dspace.cfg</code> 文件完成配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo nano <span class="variable">$HOME</span>/source/dspace/config/dspace.cfg</span><br><span class="line">sudo nano /build/dspace-6.3-src-release/dspace/config</span><br></pre></td></tr></table></figure>
+<p>主要修改以下内容:</p>
+<p><strong>显示计数器</strong></p>
+<p>搜索<code>webui.strengths.show</code>并更改为<code>true</code>。</p>
+<p>Search for <code>webui.strengths.show</code> and change to
+<code>true</code>.</p>
+<p><strong>显示推荐</strong></p>
+<p>搜索 <code>webui.suggest.enable</code>并更改为
+<code>true</code>。</p>
+<p>Search for <code>webui.suggest.enable</code> and change to
+<code>true</code>.</p>
+<p><strong>显示带有项目列表的文件缩略图</strong></p>
+<p>搜索<code>xmlui.theme.mirage.item-list.emphasis</code>并取消注释，使重点变为“文件”而不是“元数据”，当然我并没有很理解这句话。</p>
+<p>Search for <code>xmlui.theme.mirage.item-list.emphasis</code> and
+uncomment by removing the hash character in front, so that the emphasis
+becomes "file" not "metadata".</p>
+<p><strong>从右侧导航框中删除“注册”链接</strong> 在 DSpace
+配置文件中，设置以下内容并重新构建。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xmlui.user.registration=false</span><br></pre></td></tr></table></figure>
+<h4 id="介绍文字">介绍文字</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nano $HOME/source/dspace/config/news-xmlui.xml</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Use the following tags for content markup:</p>
+<ul>
+<li><head>
+<p>Title etc..</p>
+</head></li>
+<li><p>
+<p>.....</p>
+</p>
+<p>for paragraphs.</p></li>
+<li><p><list>(add items, see below)</list></p></li>
+<li><p><item>Item content</item>. Items in list above.</p></li>
+<li><p><xref target="<http://wiki.lib.sun.ac.za/index.php/BOAI/Section3>">BOAI
+Section 3</xref> for hyperlinks to other online content.</p></li>
+<li><figure source="<http://www.dspace.org/sites/dspace.org/files/dspace_logo.png>
+<p>"/&gt;</p></li>
+<li><p><hi rend="bold">Bold text... </hi></p></li>
+<li><p><hi rend="italic">Italic text... </hi></p></li>
+</ul>
+</blockquote>
+<h4 id="页脚自定义">页脚自定义</h4>
+<p>编辑下面这个文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo nano $HOME/source/dspace-xmlui-mirage2/src/main/webapp/xsl/core/page-structure.xsl</span><br><span class="line">sudo nano /build/dspace-6.3-src-release/dspace-xmlui-mirage2/src/main/webapp/xsl/core/page-structure.xsl</span><br></pre></td></tr></table></figure>
+<p><code>Ctrl</code> + <code>shift</code> + <code>-</code> 跳转到 700
+行:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;a href=&quot;http://www.dspace.org&quot;&gt;DSpace 5.3&lt;/a&gt; | &lt;a href=&quot;http://www.ubuntu.com&quot;&gt;Ubuntu 14.04&lt;/a&gt; | Copyright © &lt;a href=&quot;http://www.sun.ac.za&quot; target=&quot;_blank&quot;&gt;Stellenbosch University&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<p>根据自己的内容进行修改</p>
+<h3 id="自定义流程参考">自定义流程参考</h3>
+<p>由于我没有接触过相关依赖的使用方法，也懒得学了，因此不知道如何实时查看主题文件修改的结果。我当时是开三个终端，修改文件后切换终端执行相应的命令，由于已经在本地配置好环境，编译速度还可以接受，几分钟就可以看到结果.
+如果自定义程度要求高建议自行学习</p>
+<p>注意浏览器开启禁止缓存</p>
+<p>常用命令如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 第一个终端负责修改文件</span></span><br><span class="line">sudo nano /build/dspace-6.3-src-release/dspace-xmlui-mirage2/src/main/webapp/styles/classic_mirage_color_scheme/_bootstrap_variables.scss</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二个终端切换到相应目录下负责编译</span></span><br><span class="line">mvn package -Dmirage2.on=<span class="literal">true</span> -Dmirage2.deps.included=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 第三个终端切换到相应目录下负责安装和负责</span></span><br><span class="line">sudo <span class="built_in">cp</span> -r /dspace/webapps/* /home/dspace/tomcat/webapps* &amp;&amp; sudo service tomcat start </span><br></pre></td></tr></table></figure>
+<h2 id="激活主题">激活主题</h2>
+<ul>
+<li>打开文件:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nano $HOME/source/dspace/config/xmlui.xconf</span><br></pre></td></tr></table></figure>
+<ul>
+<li>添加 "<themes>" 部分:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;theme name=&quot;Mirage 2&quot; regex=&quot;.*&quot; path=&quot;Mirage2/&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="创建-dspace-账号">创建 dspace 账号</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /dspace/bin/dspace create-administrator</span><br><span class="line"></span><br><span class="line"><span class="comment"># 填写信息，注意 @ 这个符号一定要有，这里可以创建不带 @ 符号的账号， 但是在网页会进行检测，无法登录</span></span><br><span class="line">dspace@dspace.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># First name:</span></span><br><span class="line">Persional</span><br><span class="line"><span class="comment"># Last name:</span></span><br><span class="line">Repository</span><br><span class="line"><span class="comment"># 口令</span></span><br><span class="line">password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除构建文件夹，建议不删</span></span><br><span class="line">sudo <span class="built_in">rm</span> -rf /build	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 浏览器询问 DSpace</span></span><br><span class="line">http://localhost:8080/xmlui atau http://serverIP:8080/xmlui</span><br><span class="line">http://localhost:8080/jspui atau http://serverIP:8080/jspui	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本机 ip 查询</span></span><br><span class="line">ip addr show</span><br></pre></td></tr></table></figure>
+<h2 id="常用功能">常用功能</h2>
+<h3 id="媒体过滤器">媒体过滤器</h3>
+<p>为 PDF , 图片等生成缩略图，可以创建脚本作为定期任务执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /dspace/bin/dspace filter-media</span><br></pre></td></tr></table></figure>
+<p>如果出现 <code>OutOfMemoryError</code> 的错误，则需要修改内容</p>
+<p><a
+href="https://groups.google.com/g/dspace-community/c/aczy_rH977w">解决方案参考来源</a></p>
+<blockquote>
+<p>FILIPPOS KOLOVOS 2021年3月23日 00:16:59 收件人
+pany...@gmail.com、DSpace Community Dear Sir,</p>
+</blockquote>
+<blockquote>
+<p>This error relates to the Garbage Collection (GC) mechanism of JVM,
+which means that it does not have enough memory available to complete
+the task. More in particular, it means that the Garbage Collector is
+spending too much time clearing the heap space from unused objects, but
+at the same time it does not free more than 2% of the heap space, which
+is used for the instantiated objects. That's wh the GC reports that it
+does not have any more space to do its job.</p>
+<p>One thing you can do, if you do not have enough RAM on your server,
+is first shutdown Tomcat (this will lead to some downtime for your
+server, but it will free up some valuable RAM and after OAI completes
+you can restart it) and then go to the
+<strong>/dspace/bin/dspace</strong> file of your running dspace instance
+and edit it with your text editor. Then, in the file search and find the
+line:</p>
+<p><strong>JAVA_OPTS="-Xmx256m -Dfile.encoding=UTF-8"</strong></p>
+<p>and <strong>change it</strong> to:</p>
+<p><strong><a href="">JAVA_OPTS="-Xmx2048m -Xms1024m
+-Dfile.encoding=UTF-8"</a></strong></p>
+<p><strong>DO NOT</strong> copy and paste the line, but edit it in
+place, because you do not want to mess up this file.</p>
+<p>This will specify that the dspace <strong>TOOL</strong> (which is the
+file you are running for the OAI) will use <strong>from 1024MB up to
+2048MB RAM</strong> for its task and not just <strong>256MB</strong>.
+However, you <strong>must have more than 2048MB RAM</strong> available
+on the server (i.e. 3GB), or the script will fail again and it might
+hang your server. If you have <strong>LESS</strong> than 3GB allocated
+to the server, then adjust these values accordingly (i.e. Xmx1024m
+Xms500m, etc).</p>
+<p>The bottomline is that you do not have enough memory to complete the
+task and even if your server has 32GB RAM, the dspace tool will only use
+up to the RAM specified in this file.</p>
+<p>I hope that I have helped!</p>
+<p>Best Regards,</p>
+<p>-Fk</p>
+</blockquote>
+<h3 id="项目版本历史">项目版本历史</h3>
+<p>参见官网文档取消注释即可，对应配置文件与开启 mirage2
+的配置文件是同一个.</p>
+<p>配置文件有 item 字样，可以阅读相关注释确定，并不复杂</p>
+<h2 id="configure-tomcat">configure tomcat</h2>
+<p>不配置文本可以通过执行以下命令启动 tomcat,
+相关命令可以与媒体过滤器一起执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /home/dspace/tomcat/bin/startup.sh</span><br></pre></td></tr></table></figure>
+<h2 id="nginx-代理">Nginx 代理</h2>
+<p>用得不熟悉，代理过程有 bug , 暂时不使用</p>
+<p><strong>referen</strong></p>
+<ul>
+<li>http://tuckey.org/urlrewrite/</li>
+<li>https://wiki.lib.sun.ac.za/index.php/SUNScholar/Prepare_Ubuntu/S05/Ubuntu-16.04</li>
+</ul>
+<h2 id="常用命令">常用命令</h2>
+<p>启动 tomcat 并为 PDF 和图片生成缩略图</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /home/dspace/tomcat/bin/startup.sh &amp;&amp; sudo /dspace/bin/dspace filter-media</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Web</category>
+        <category>DSpace</category>
+      </categories>
+      <tags>
+        <tag>dspace</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Install MediaWiki in Debian</title>
+    <url>/2022/07/13/Web/MediaWiki/install-MediaWiki/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="preface">Preface</h1>
+<p>准备搭建一个个人Wiki，选择 MediaWiki，<a
+href="https://www.mediawiki.org/wiki/MediaWiki">Official website</a></p>
+<span id="more"></span>
+<h1 id="step">Step</h1>
+<h2 id="update-apt-and-softwareor-packages">update apt and software(or
+packages?)</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+<h2 id="install-mariadb">install MariaDB</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mariadb-server</span><br><span class="line">sudo systemctl status mariadb  </span><br></pre></td></tr></table></figure>
+<p>常用命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl start mariadb</span><br><span class="line">sudo systemctl restart mariadb</span><br><span class="line">sudo systemctl stop mariadb</span><br><span class="line">sudo systemctl reload mariadb</span><br></pre></td></tr></table></figure>
+<h2 id="configure-mariadb">configure MariaDB</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># change root password</span><br><span class="line">sudo mysql -u root -p</span><br><span class="line"># 按下 Enter 显示 Enter password：</span><br><span class="line"># 直接按下 Enter 进入 MariaDB</span><br><span class="line"># create root user and password</span><br><span class="line">ALTER USER &#x27;root&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;password&#x27;;</span><br><span class="line"># for example, the password is password</span><br><span class="line">ALTER USER &#x27;root&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;password&#x27;;</span><br><span class="line"></span><br><span class="line"># create a normal user </span><br><span class="line">CREATE USER &#x27;username&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;password&#x27;;</span><br><span class="line"># for example</span><br><span class="line">CREATE USER &#x27;wiki&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;password&#x27;;</span><br><span class="line"></span><br><span class="line"># create a database</span><br><span class="line">CREATE DATABASE databasename;</span><br><span class="line"># for example</span><br><span class="line">CREATE DATABASE wiki;</span><br><span class="line"></span><br><span class="line"># give the created user(wiki) permission to operate the database(wiki)</span><br><span class="line">GRANT ALL PRIVILEGES ON wiki.* TO &quot;wiki&quot;@&quot;%&quot;;</span><br><span class="line"># refresh the permissions to make the modification take effect immediately</span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line"></span><br><span class="line">exit</span><br></pre></td></tr></table></figure>
+<h2 id="install-php">install PHP</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clear</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意 MediaWiki 对安装的 PHP 版本有要求,可去官网查看</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#在我们安装任何软件之前，重要的是通过运行以下命令确保您的系统是最新的 apt 终端中的命令：</span></span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用为 PHP 7.4 包添加 Sury PPA wget： </span></span><br><span class="line">sudo apt -y install lsb-release apt-transport-https ca-certificates wget</span><br><span class="line">sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加存储库</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb https://packages.sury.org/php/ <span class="subst">$(lsb_release -sc)</span> main&quot;</span> | sudo <span class="built_in">tee</span> /etc/apt/sources.list.d/php.list</span><br><span class="line"></span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install php7.4</span><br><span class="line">php -v</span><br><span class="line">sudo apt install php7.4-fpm php7.4-gd</span><br><span class="line">sudo apt install php7.4-mbstring php7.4-dom php7.4-xml php7.4-intl</span><br><span class="line"></span><br><span class="line"><span class="comment"># Mariadb 也可以使用该依赖</span></span><br><span class="line">sudo apt install php7.4-mysql</span><br><span class="line"><span class="comment"># 但这个得用自己的</span></span><br><span class="line">sudo apt-get install libmariadbclient-dev</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 php</span></span><br><span class="line">sudo service php7.4-fpm start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看服务是否启动</span></span><br><span class="line">ps -aux | grep php-fpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若正常启动则显示</span></span><br><span class="line">root      2496  0.0  2.9 247400 28236 ?        Ss   22:12   0:00 php-fpm: master process (/etc/php/7.4/fpm/php-fpm.conf)</span><br><span class="line">www-data  2497  0.0  1.2 247684 11540 ?        S    22:12   0:00 php-fpm: pool www</span><br><span class="line">www-data  2498  0.0  1.2 247684 11540 ?        S    22:12   0:00 php-fpm: pool www</span><br><span class="line">root      3145  0.0  0.0   6072   892 pts/0    S+   22:15   0:00 grep php-fpm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="install-nginx">install Nginx</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure>
+<h2 id="configure-nginx">configure Nginx</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 不同版本的 nginx 其配置文件的位置可能不同，可以通过</span></span><br><span class="line">whereis nginx</span><br><span class="line"><span class="comment"># 查找 nginx 位置，使用</span></span><br><span class="line">locate nginx.conf</span><br><span class="line"><span class="comment"># 查找配置文件的位置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到 nginx 的配置目录</span></span><br><span class="line"><span class="built_in">cd</span> /etc/nginx/sites-enabled</span><br><span class="line"><span class="comment"># or 直接修改</span></span><br><span class="line">sudo nano /etc/nginx/sites-enabled/default</span><br><span class="line"><span class="comment"># 修改配置文件</span></span><br><span class="line">sudo nano default</span><br><span class="line"><span class="comment"># 或者新建一个文件夹</span></span><br><span class="line">sudo nano wiki</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改为以下内容</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">listen</span> [::]:<span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># SSL configuration</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># listen 443 ssl default_server;</span></span><br><span class="line">        <span class="comment"># listen [::]:443 ssl default_server;</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># Note: You should disable gzip for SSL traffic.</span></span><br><span class="line">        <span class="comment"># See: https://bugs.debian.org/773332</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># Read up on ssl_ciphers to ensure a secure configuration.</span></span><br><span class="line">        <span class="comment"># See: https://bugs.debian.org/765782</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># Self signed certs generated by the ssl-cert package</span></span><br><span class="line">        <span class="comment"># Don&#x27;t use them in a production server!</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># include snippets/snakeoil.conf;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#把这条默认的注释掉</span></span><br><span class="line">        <span class="comment">#root /usr/share/nginx/html;</span></span><br><span class="line">        <span class="attribute">root</span> /var/www/html;</span><br><span class="line">        <span class="comment"># 将上面的代码改为</span></span><br><span class="line">        <span class="comment"># root /var/www/html/wiki;</span></span><br><span class="line">        <span class="comment"># 就可以实现直接通过域名或者 IP 直接访问，无需加文件夹名字</span></span><br><span class="line">        <span class="comment"># 但是需要注意 php 文件中的路径设置</span></span><br><span class="line">    </span><br><span class="line">        <span class="comment"># Add index.php to the list if you are using PHP</span></span><br><span class="line">        <span class="attribute">index</span> index.php;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">server_name</span> wiki;</span><br><span class="line">        <span class="comment"># 这里填写解析到服务器的域名</span></span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">                <span class="attribute">proxy_set_header</span>   Host             <span class="variable">$host</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span>   X-Real-IP        <span class="variable">$remote_addr</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span>   X-Forwarded-For  <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">                <span class="attribute">if</span> (<span class="variable">$request_filename</span>  !<span class="regexp">~* (xml|txt|js|flash|css|images|gif|ico|html))</span>  &#123;</span><br><span class="line">                    <span class="attribute">rewrite</span><span class="regexp"> ^/(.*)$</span> /index.php?/<span class="variable">$1</span> <span class="literal">last</span>;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="section">location</span> <span class="regexp">~ \.php</span> &#123;</span><br><span class="line">                <span class="attribute">include</span> fastcgi_params;</span><br><span class="line">                <span class="attribute">fastcgi_pass</span> unix:/var/run/php/php7.4-fpm.sock;</span><br><span class="line">                <span class="attribute">fastcgi_index</span> index.php;</span><br><span class="line">                <span class="attribute">fastcgi_param</span> PATH_INFO       <span class="variable">$fastcgi_path_info</span>;</span><br><span class="line">                <span class="attribute">fastcgi_param</span> PATH_TRANSLATED <span class="variable">$document_root</span><span class="variable">$fastcgi_path_info</span>;</span><br><span class="line">                <span class="attribute">fastcgi_param</span> SCRIPT_FILENAME <span class="variable">$document_root</span><span class="variable">$fastcgi_script_name</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="section">location</span> <span class="regexp">~ .*.(gif|jpg|jpeg|png|bmp|swf|js|css)$</span></span><br><span class="line">        &#123;</span><br><span class="line">                <span class="attribute">expires</span> <span class="number">2d</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看一下配置是否正确</span></span><br><span class="line">sudo nginx -t</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若为以下内容则配置无误</span></span><br><span class="line">nginx: the configuration file /etc/nginx/nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file /etc/nginx/nginx.conf <span class="built_in">test</span> is successful</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新载入 nginx</span></span><br><span class="line">sudo nginx -s reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们需要向 Wiki 上传图片，而 Nginx 允许上传文件最大为 256m，需要修改一下</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 返回上一级</span></span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"><span class="comment"># 查看配置目录</span></span><br><span class="line"><span class="built_in">ls</span> -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改配置文件</span></span><br><span class="line">sudo nano nginx.conf</span><br><span class="line"><span class="comment"># 添加以下内容 (256 这个数值可以自己改)</span></span><br><span class="line">client_max_maxclient_max_body_size 256M;</span><br></pre></td></tr></table></figure>
+<p>位置如图所示</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">http</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">##</span></span><br><span class="line">        <span class="comment"># Basic Settings</span></span><br><span class="line">        <span class="comment">##</span></span><br><span class="line">        <span class="attribute">client_max_maxclient_max_body_size</span> <span class="number">256M</span>;</span><br><span class="line">        <span class="attribute">sendfile</span> <span class="literal">on</span>;</span><br><span class="line">        <span class="attribute">tcp_nopush</span> <span class="literal">on</span>;</span><br><span class="line">        <span class="attribute">tcp_nodelay</span> <span class="literal">on</span>;</span><br><span class="line">        <span class="attribute">keepalive_timeout</span> <span class="number">65</span>;</span><br><span class="line">        <span class="attribute">types_hash_max_size</span> <span class="number">2048</span>;</span><br><span class="line">        <span class="comment"># server_tokens off;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># server_names_hash_bucket_size 64;</span></span><br><span class="line">        <span class="comment"># server_name_in_redirect off;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重新加载</span></span><br><span class="line">sudo nginx -s reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果遇到错误可能是由于系统中的 Apache2 正在运行</span></span><br><span class="line">sudo /etc/init.d/apache2 stop</span><br><span class="line">sudo systemctl restart nginx</span><br><span class="line">sudo nginx -s reload</span><br></pre></td></tr></table></figure>
+<h2 id="download-mediawiki">download MediaWiki</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span></span><br><span class="line"><span class="comment"># 或切换目录下载</span></span><br><span class="line"><span class="built_in">cd</span> /var/www/html</span><br><span class="line"></span><br><span class="line">wget https://releases.wikimedia.org/mediawiki/1.38/mediawiki-1.38.1.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压文件</span></span><br><span class="line">sudo tar -zxvf mediawiki-1.38.1.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压后的文件名为 mediawiki-1.38.1</span></span><br><span class="line"><span class="comment"># 将解压后的文件改名为 wiki</span></span><br><span class="line"><span class="built_in">mv</span> mediawiki-1.38.1 wiki</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开源节流</span></span><br><span class="line">sudo <span class="built_in">rm</span> mediawiki-1.38.1.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将改名后的文件移动到 var/www/html下</span></span><br><span class="line">sudo <span class="built_in">mv</span> wiki /var/www/html</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换目录</span></span><br><span class="line"><span class="built_in">cd</span> /var/www/html</span><br><span class="line"><span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+<h2 id="configure-mediawiki">configure MediaWiki</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 访问 http://ip/&#123;wiki文件的文件名&#125;</span></span><br><span class="line"><span class="comment"># 比如本例子中 mediawiki-1.38.1 改为 wiki</span></span><br><span class="line"><span class="comment"># 那就访问</span></span><br><span class="line"><span class="comment"># http://&lt;IP&gt;/wiki</span></span><br><span class="line"><span class="comment"># 访问成功会跳转到一个开始配置的页面</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置根据个人情况选择</span></span><br><span class="line"><span class="comment"># 安装 git</span></span><br><span class="line">sudo apt install git</span><br><span class="line"><span class="comment"># 安装 apcu caching(仅适用 Debian/Ubuntu)</span></span><br><span class="line">sudo apt install php7.4-apcu php7.4-apcu-bc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启 PHP Nginx</span></span><br><span class="line">sudo service php7.4-fpm restart</span><br><span class="line">sudo service nginx restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户名：</span></span><br><span class="line">username</span><br><span class="line"><span class="comment"># 口令</span></span><br><span class="line">password</span><br><span class="line"><span class="comment"># 邮箱</span></span><br><span class="line">*@*</span><br><span class="line"><span class="comment"># 配置有时间限制，似乎是 24 分钟</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者以后再改</span></span><br><span class="line"><span class="comment"># 注意自定义时 svg 的选择要符合要求，不然最终出现的主页将会是最原始的那种，无法处理</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看数据库</span><br><span class="line">mysql -uwiki -p</span><br><span class="line">SHOW DATABASES;</span><br></pre></td></tr></table></figure>
+<h2 id="图片及文件支持">图片及文件支持</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install imagemagick</span><br><span class="line"></span><br><span class="line">sudo apt install ghostscript</span><br><span class="line"></span><br><span class="line">sudo apt install poppler-utils</span><br><span class="line"></span><br><span class="line">sudo apt-get install libmagick++-dev</span><br><span class="line"></span><br><span class="line">sudo apt-get install php-imagick</span><br><span class="line"></span><br><span class="line">sudo service php7.4-fpm restart</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /var/www/html/wiki</span><br><span class="line"><span class="comment"># 赋予权限很重要</span></span><br><span class="line"><span class="built_in">chmod</span> 777 -R images</span><br><span class="line"></span><br><span class="line">nano /var/www/html/wiki/LocalSettings.php</span><br><span class="line">sudo nano LocalSettings.php</span><br></pre></td></tr></table></figure>
+<p>配置文件修改如下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$wgEnableUploads</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$wgUseImageMagick</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$wgImageMagickConvertCommand</span> = <span class="string">&quot;/usr/bin/convert&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$wgPdfProcessor</span> = <span class="string">&#x27;/usr/bin/gs&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$wgPdfPostProcessor</span> = <span class="variable">$wgImageMagickConvertCommand</span>; </span><br><span class="line"><span class="comment"># if defined via ImageMagick</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $wgPdfPostProcessor = &#x27;/usr/bin/convert&#x27;;  </span></span><br><span class="line"><span class="comment"># if not defined via ImageMagick</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$wgPdfInfo</span> = <span class="string">&#x27;/usr/bin/pdfinfo&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$wgPdftoText</span> = <span class="string">&#x27;/usr/bin/pdftotext&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$wgFileExtensions</span> = <span class="keyword">array</span>( <span class="string">&#x27;png&#x27;</span>, <span class="string">&#x27;gif&#x27;</span>, <span class="string">&#x27;jpg&#x27;</span>, <span class="string">&#x27;jpeg&#x27;</span>, <span class="string">&#x27;doc&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;xls&#x27;</span>, <span class="string">&#x27;mpp&#x27;</span>, <span class="string">&#x27;pdf&#x27;</span>, <span class="string">&#x27;ppt&#x27;</span>, <span class="string">&#x27;tiff&#x27;</span>, <span class="string">&#x27;bmp&#x27;</span>, <span class="string">&#x27;docx&#x27;</span>, <span class="string">&#x27;xlsx&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;pptx&#x27;</span>, <span class="string">&#x27;ps&#x27;</span>, <span class="string">&#x27;odt&#x27;</span>, <span class="string">&#x27;ods&#x27;</span>, <span class="string">&#x27;odp&#x27;</span>, <span class="string">&#x27;odg&#x27;</span></span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Web</category>
+        <category>MediaWiki</category>
+      </categories>
+      <tags>
+        <tag>wiki</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>My first blog</title>
+    <url>/2022/07/12/Web/Hexo/my-first-blog/</url>
+    <content><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="preface">Preface</h1>
+<p>今年年初突然间有了搭建一个个人网站的想法。</p>
 <span id="more"></span>
 <p>一是为了记录自己曾经走过的那段路，正所谓泰戈尔所言：天空没留下翅膀的痕迹，但我已飞过。二是通过简单的写作，提高遣词造句的水平。本来是想打造一个纯外文的网站，顺便练习外语，但真到落笔又觉能力不足，便想着中英混杂慢慢过渡吧，这整个过程用网站记录一下似乎也挺不错
 ( 中英混杂没有其他意思 )。三是之前笔记主要用 LaTeX
 进行记录，感觉略显正式，对于一些零散、天马行空的的想法，实在难以落笔，纠结于破坏整体的内容，形成割裂感。Markdown
 网页在这方面算是一个很好的补充，再加上喜欢 Hexo
-的风格，便随意地开启了一个新坑(当然这个想法是几天前才有)。</p>
+的风格，便随意地开启了一个新坑(当然这个想法是几天前才有)。四是 markdown
+记录代码比较方便，搜索复制粘贴也很方便。</p>
+<p>当然数学公式很多的网页还是通过 LaTeX 制作再转换格式。</p>
 <p>有了想法就着手去做，网上浏览了一下发现 Blog
-很适合，就买了一台服务器和一个域名便开始折腾起来，当时搭建的是 WordPress
+很适合，就买了一台服务器和一个域名开始折腾起来，当时搭建的是 WordPress
 。经过一晚上的折腾，一不小心在美化上迷失自我，Blog 是搭出来了，WordPress
 的模式却不太适应，再加上还有事情忙，留的时间只够写碎碎念，那边便荒废了。今天回想起来，看到输入域名跳出自己的主页还是挺开心的。</p>
 <p>总是这样，需要折腾，尝试，我才知道自己喜欢什么，适合什么 (
 也可能现在还不知道吧 )。</p>
 <p>主要记录自己平时学到的内容，比如计算机知识，或者关于数学物理等的一些东西。</p>
-<p><strong>本站点所有内容不具有知识传播的作用，仅作为个人记录</strong></p>
+<p><strong>本站点所有内容不以知识传播的为主要目的，更多的是个人记录</strong></p>
 <p>当然如果有幸被你看到提出想法或指出错误，我也十分乐意接受。</p>
 <p>由于自己的水平有限，有错误在所难免，本人也将尽力避免传播错误的信息，博客内容也会不断更新，纠正错误。作为常年踩坑的普通一员，我深知历经千辛万苦搜索答案，却遇到错误答案的心酸苦闷。</p>
 <p>就不做过多介绍了，但愿我能更新下去，记录下去吧。</p>
+<p>幸运的是中文的站点已经顺利搭建起来，由于人懒，那边并没有完全自定义，也没有使用
+SSL。</p>
+<p>至此两个站点的内容不尽相同，这里以英文技术性为主，那边则以中文一般性内容为主，英文可能来自中文内容的翻译，也可能是全新的内容。但愿我能记住自己的约定吧。</p>
+<p>稍微多说几句，多次回头看自己写的东西，总感觉错误一大堆，无论是语病还是遣词造句的问题，只能慢慢修改了。</p>
 <h1 id="introduction">Introduction</h1>
 <p>这是第一篇正式的博文，Hexo
 的搭建过程参考了比较多的文章，本来打算部署在阿里云上的，可惜还是没能实现，转而尝试部署在
@@ -215,7 +557,7 @@ footnote content<a href="#fnref:1" rev="footnote"> ↩︎</a></span>
     ]]></content>
       <categories>
         <category>Web</category>
-        <category>Blog</category>
+        <category>Hexo</category>
       </categories>
       <tags>
         <tag>hexo</tag>
